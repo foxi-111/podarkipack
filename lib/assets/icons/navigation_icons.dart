@@ -32,4 +32,6 @@ class NavigationIcon {
   static const IconData pluscircle = IconData(0xe808, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData x = IconData(0xe809, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData x_circle = IconData(0xe80a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData logo = IconData(0xe80b, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData notification = IconData(0xe80c, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }
