@@ -7,6 +7,7 @@ import 'package:podartkipak/models/category_model.dart';
 import 'package:podartkipak/models/stock_model.dart';
 import 'package:podartkipak/pages/search_page.dart';
 
+import '../models/popular_products.dart';
 import '../styles/colors.dart';
 import '../styles/style.dart';
 
@@ -58,6 +59,42 @@ class _HomePageState extends State<HomePage> {
     return data.map<Stock>(Stock.fromJson).toList();
   }
 
+  static List<PopularProduct> popularProducts = getPopularProducts();
+
+  static List<PopularProduct> getPopularProducts() {
+    const data = [
+      {
+        "Title": "Подарочный набор №1, лучший набор для девушек и...",
+        "Url": "https://podarkipack.ru/img/product-1.jpg",
+        "Price": 1500,
+        "PriceDiscount": 1250,
+        "Discount": 25,
+      },
+      {
+        "Title": "Подарочный набор №1, лучший набор для девушек и...",
+        "Url": "https://podarkipack.ru/img/product-2.jpg",
+        "Price": 1500,
+        "PriceDiscount": 0,
+        "Discount": 0,
+      },
+      {
+        "Title": "Подарочный набор №1, лучший набор для девушек и...",
+        "Url": "https://podarkipack.ru/img/product-3.jpg",
+        "Price": 1500,
+        "PriceDiscount": 1250,
+        "Discount": 25,
+      },
+      {
+        "Title": "Подарочный набор №1, лучший набор для девушек и...",
+        "Url": "https://podarkipack.ru/img/product-1.jpg",
+        "Price": 1500,
+        "PriceDiscount": 1250,
+        "Discount": 25,
+      },
+    ];
+    return data.map<PopularProduct>(PopularProduct.fromJson).toList();
+  }
+
   int currentIndex = 0;
   final PageController controller = PageController();
 
@@ -85,8 +122,16 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        // show the snackbar with some text
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('The System Back Button is Deactivated!')));
+        return false;
+      },
+      child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           elevation: 0.0,
           systemOverlayStyle: const SystemUiOverlayStyle(
             // Status bar brightness (optional)
@@ -151,19 +196,14 @@ class _HomePageState extends State<HomePage> {
             )
           ],
         ),
-        body: Container(
-          color: ColorStyle.accentBackground,
-          child: Column(
-            children: [
-              Container(
-                height: 16,
-                color: Colors.white,
-              ),
-              //Карусель
-              Container(
-                color: Colors.white,
-                height: 185,
-                width: double.infinity,
+        body: ListView(
+          children: [
+            Container(
+              color: Colors.white,
+              height: 200,
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16),
                 child: PageView.builder(
                   controller: controller,
                   onPageChanged: (index) {
@@ -212,101 +252,179 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
               ),
-              Container(
-                color: Colors.white,
-                height: 4,
+            ),
+            Container(
+              color: Colors.white,
+              height: 4,
+            ),
+            Container(
+              color: Colors.white,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 0; i < stocks.length; i++)
+                    buildIndicator(currentIndex == i)
+                ],
               ),
-              Container(
-                color: Colors.white,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (var i = 0; i < stocks.length; i++)
-                      buildIndicator(currentIndex == i)
-                  ],
-                ),
-              ),
+            ),
 
-              const SizedBox(
-                height: 7,
-              ),
+            const SizedBox(
+              height: 7,
+            ),
 
-              Container(
-                color: Colors.white,
-                height: 90,
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 16),
-                      child: Text(
-                        'Самые популярные категории:',
-                        style: Style.textAccent,
-                      ),
+            Container(
+              color: Colors.white,
+              height: 90,
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 16),
+                    child: Text(
+                      'Самые популярные категории:',
+                      style: Style.textAccent,
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 15, bottom: 15),
-                        child: GridView.builder(
-                          scrollDirection: Axis.horizontal,
-                          gridDelegate:
-                              const SliverGridDelegateWithMaxCrossAxisExtent(
-                            mainAxisSpacing: 4,
-                            maxCrossAxisExtent: double.infinity,
-                            crossAxisSpacing: 24,
-                            mainAxisExtent: 100,
-                          ),
-                          itemCount: categories.length,
-                          itemBuilder: (context, index) {
-                            final category = categories[index];
-                            return Container(
-                              margin: const EdgeInsets.only(left: 10),
-                              decoration: const BoxDecoration(
-                                  gradient: ColorStyle
-                                      .gradient, // устанавливаем градиент в фон
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(25))),
-                              width: 70,
-                              height: 24,
-                              child: Center(
-                                  child: Text(
-                                category.title,
-                                style: fontSized(category.title),
-                              )),
-                            );
-                          },
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 15, bottom: 15),
+                      child: GridView.builder(
+                        scrollDirection: Axis.horizontal,
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                          mainAxisSpacing: 4,
+                          maxCrossAxisExtent: double.infinity,
+                          crossAxisSpacing: 24,
+                          mainAxisExtent: 100,
                         ),
+                        itemCount: categories.length,
+                        itemBuilder: (context, index) {
+                          final category = categories[index];
+                          return Container(
+                            margin: const EdgeInsets.only(left: 10),
+                            decoration: const BoxDecoration(
+                                gradient: ColorStyle
+                                    .gradient, // устанавливаем градиент в фон
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(25))),
+                            width: 70,
+                            height: 24,
+                            child: Center(
+                                child: Text(
+                              category.title,
+                              style: fontSized(category.title),
+                            )),
+                          );
+                        },
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
 
-              //Остальное
-              const SizedBox(
-                height: 7,
+            //Остальное
+            const SizedBox(
+              height: 7,
+            ),
+
+            Container(
+              height: 450,
+              width: double.infinity,
+              color: Colors.white,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 16, bottom: 20),
+                    child: Text(
+                      'Популярные товары:',
+                      style: Style.textAccent,
+                    ),
+                  ),
+                  //Список популярных товаров
+                  // Expanded(
+                  //   child: GridView.builder(
+                  //     itemCount: popularProducts.length,
+                  //     gridDelegate:
+                  //         const SliverGridDelegateWithFixedCrossAxisCount(
+                  //       crossAxisSpacing: 10,
+                  //       mainAxisSpacing: 10,
+                  //       crossAxisCount: 2,
+                  //     ),
+                  //     itemBuilder: (context, index) {
+                  //       final popularProduct = popularProducts[index];
+                  //       return containerPopularProduct(
+                  //           popularProduct.title,
+                  //           popularProduct.url,
+                  //           popularProduct.price,
+                  //           popularProduct.priceDiscount,
+                  //           popularProduct.discount);
+                  //     },
+                  //   ),
+                  // ),
+                ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-              Container(
-                width: double.infinity,
+  Widget containerPopularProduct(
+      String title, String url, int price, int priceDicount, int discount) {
+    if (discount == 0) {
+      return Container(
+        height: 250,
+        color: Colors.transparent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                height: 173,
+                width: 173,
                 color: Colors.white,
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 16),
-                      child: Text(
-                        'Популярные товары:',
-                        style: Style.textAccent,
-                      ),
-                    ),
-                  ],
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(url),
                 ),
               ),
-            ],
-          ),
-        ));
+            ),
+            Text(
+              '$price',
+              style: const TextStyle(fontSize: 20),
+            )
+          ],
+        ),
+      );
+    } else {
+      return SizedBox(
+        height: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                height: 173,
+                width: 173,
+                color: Colors.white,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(url),
+                ),
+              ),
+            ),
+            Text(
+              '$price',
+              style: const TextStyle(fontSize: 20),
+            )
+          ],
+        ),
+      );
+    }
   }
 
   //Подсчет количество букв кждой категории и изменения размера шрифта

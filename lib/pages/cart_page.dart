@@ -88,17 +88,6 @@ class _CartFullState extends State<CartFull> {
 
   int summ = 0;
 
-  void summa() {
-    for (var i = 0; i < carts.length; i++) {
-      var cart = carts[i];
-      if (cart.discount == 0) {
-        summ += cart.price;
-      } else {
-        summ += cart.priceDiscount;
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
